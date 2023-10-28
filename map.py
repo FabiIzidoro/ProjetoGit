@@ -29,8 +29,6 @@ class Mundo():
                     terra_data = (img, img_rect)
 
                     if terra >= 0 and terra <= 8:
-                         #agua = Agua(img, x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                         #agua_grupo.add(agua)
                         self.obstaculo_list.append(terra_data)
 
                     elif terra >= 9 and terra <= 10:
