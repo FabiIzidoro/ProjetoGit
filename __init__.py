@@ -101,7 +101,7 @@ with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
         for y, terra in enumerate(linha):
             terra_data[x][y] = int(terra)
 
-# print(terra_data)
+print(terra_data)
 
 
 def desenhar_text(text, font, text_color, x, y):  # localidade de display texto
