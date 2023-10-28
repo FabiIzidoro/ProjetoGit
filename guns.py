@@ -57,17 +57,25 @@ class Granada(pygame.sprite.Sprite):
 
 
         for terra in mundo.obstaculo_list:
-            if terra[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
-                self.direcao *= -1
-                dx = -self.direcao * self.velocidade
-                if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                    self.velocidade = 0
-                    if self.vel_y < 0:
-                        self.vel_y = 0
-                        dy = terra[1].bottom - self.rect.top
-                    elif self.vel_y >= 0:
-                        self.vel_y = 0
-                        dy = terra[1].top - self.rect.bottom
+            if terra[1].colliderect(self.rect):#(self.rect.x + dx, self.rect.y, self.width, self.height):
+                self.velocidade = 0
+                self.vel_y = 0
+                dy = 0
+                if self.rect.centerx < terra[1].centerx:
+                    self.rect.right = terra[1].left
+
+                else:
+                    self.rect.left = terra[1].right    
+                #self.direcao *= -1
+                #dx = -self.direcao * self.velocidade
+                #if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                    #self.velocidade = 0
+                    #if self.vel_y < 0:
+                        #self.vel_y = 0
+                        #dy = terra[1].bottom - self.rect.top
+                    #elif self.vel_y >= 0:
+                        #self.vel_y = 0
+                        #dy = terra[1].top - self.rect.bottom
 
         if self.rect.left + dx < 0 or self.rect.right + dx > TELA_LARGURA:
             self.direcao *= -1
