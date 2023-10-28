@@ -93,28 +93,34 @@ class Soldado(pygame.sprite.Sprite):
 
         self.vel_y += GRAVIDADE
         if self.vel_y > 10:
+            self.vel_y = 0
 
-            self.vel_y
         dy += self.vel_y
 
         for terra in mundo.obstaculo_list:
             if terra[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
-                dx = 0
-
+                
                 if self.jogador_tipo == 'jogador':
+                    # print("COLIDE X -=> ", terra[1], self.rect)
                     if self.rect.left + dx < 0 or self.rect.right + dx > TELA_LARGURA:
                         dx = 0
+                dx = 0
 
-
-            if terra[1].colliderect(self.rect.x, self.rect.y * dy, self.width, self.height):
-                if self.vel_y <= 0:  # reduzindo velocidade a obstaculos
-                    self.vel_y = 0
-                    dy = terra[1].bottom - self.rect.top
-
-            elif self.vel_y >= 0:
+            if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                print("COLIDE Y -=> ", terra[1], self.rect)
+                if self.vel_y >= 0:  # reduzindo velocidade a obstaculos
+                    self.no_ar = False
                 self.vel_y = 0
-                self.no_ar = False
+                # self.no_ar = False
                 dy = terra[1].top - self.rect.bottom
+
+            # elif self.vel_y >= 0:
+                # print("self.vel_y >= 0")
+                # self.vel_y -= GRAVIDADE
+                # if self.vel_y < 0:
+                #     self.vel_y = 0
+                #     self.no_ar = False
+                #     dy = terra[1].top - self.rect.bottom
 
         # se caso cair, ele morre
         if pygame.sprite.spritecollide(self, agua_grupo, False):
@@ -124,16 +130,17 @@ class Soldado(pygame.sprite.Sprite):
             self.saude_vida = 0
 
         if self.jogador_tipo == 'jogador':
-            if self.rect.left + dx < 0 or self.rect.right * dx > TELA_LARGURA:
+            if self.rect.left + dx < 0 or self.rect.right + dx > TELA_LARGURA:
                 dx = 0
 
         self.rect.x += dx
         self.rect.y += dy
 
         if self.jogador_tipo == 'jogador':
-            if (self.rect.right > TELA_LARGURA - LIXO and bg_rolar < (mundo.nevel_lenght * TERRA_TAMANHO) - TELA_LARGURA) or (self.rect.left < LIXO and bg_rolar > abs(dx)):
+            if (self.rect.right > TELA_LARGURA - LIXO and bg_rolar < (mundo.nivel_lenght * TERRA_TAMANHO) - TELA_LARGURA) or (self.rect.left < LIXO and bg_rolar > abs(dx)):
                 self.rect.x -= dx
                 tela_rolar = -dx
+
         return tela_rolar
 
     def atirar(self):
