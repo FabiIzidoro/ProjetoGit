@@ -136,9 +136,6 @@ while run:
                     linha_int = [int(terra) for terra in linha]
                     terra_data.append(linha_int)
 
-
-
-
             
             meu_mundo = Mundo()
             jogador, barra_vida = meu_mundo.processo_data(terra_data)
