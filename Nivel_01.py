@@ -124,11 +124,12 @@ while run:
             bg_rolar -= tela_rolar
 
         else:
-            tela_rolar = 0
-            if restart_button.draw(tela):
-                bg_rolar = 0
+            if jogador.frame_index == len(jogador.animacao_lista[jogador.acao]) - 1:
+                tela_rolar = 0
+                if restart_button.draw(tela):
+                    bg_rolar = 0
 
-            terra_data = []  # Inicialize a lista vazia
+                terra_data = []  # Inicialize a lista vazia
 
             with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
                 reader = csv.reader(csvfile, delimiter=',')
@@ -136,8 +137,12 @@ while run:
                     linha_int = [int(terra) for terra in linha]
                     terra_data.append(linha_int)
 
+
+
+
             
             meu_mundo = Mundo()
+            reiniciar_nivel()
             jogador, barra_vida = meu_mundo.processo_data(terra_data)
 
 
@@ -175,7 +180,3 @@ while run:
     pygame.display.update()
 
 pygame.quit()
-
-
-
-        
