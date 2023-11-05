@@ -22,8 +22,8 @@ from map import Mundo
 from guns import Granada
 
 
-mundo = Mundo()
-jogador, barra_vida = mundo.processo_data(terra_data)
+meu_mundo = Mundo()
+jogador, barra_vida = meu_mundo.processo_data(terra_data)
 
 
 # criando botoes
@@ -56,11 +56,30 @@ def desenho_bg():
 
 
 game_started = False
-
+restarted = False
 run = True
+
 while run:
     relogio.tick(FPS)
-    if game_started == False:
+
+    if restarted:
+        if restart_button.draw(tela):
+            restarted = False
+            bg_rolar = 0
+            
+            meu_mundo.obstaculo_list.clear()
+            reiniciar_nivel()
+            terra_data.clear()
+        
+            with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
+                reader = csv.reader(csvfile, delimiter=',')
+                for linha in reader:
+                    linha_int = [int(terra) for terra in linha]
+                    terra_data.append(linha_int)
+            
+            jogador, barra_vida = meu_mundo.processo_data(terra_data)
+            
+    elif game_started == False:
 
         tela.fill(BG)  # se inicia tudo
         if start_button.draw(tela):
@@ -70,11 +89,10 @@ while run:
             run = False
 
     else:
-
         desenho_bg()
-        
         barra_vida.desenhar_barra(jogador.saude_vida)
 
+        # Desenha as informações do player, como munições e granadas
         desenhar_text('Munição:', font, RED, 10, 35)
         for x in range(jogador.monicao):
             tela.blit(bala_img, (90 + (x*10), 40))
@@ -87,12 +105,12 @@ while run:
         jogador.desenho()
 
         for inimigo in inimigo_grupo:
-            inimigo.ai_inimigo(jogador, mundo)
+            inimigo.ai_inimigo(jogador, meu_mundo)
             inimigo.atualizar()
             inimigo.desenho()
 
-        bala_grupo.update(jogador, mundo)
-        granada_grupo.update(jogador, mundo)
+        bala_grupo.update(jogador, meu_mundo)
+        granada_grupo.update(jogador, meu_mundo)
         explode_grupo.update()
         item_caixa_grupo.update(jogador)
 
@@ -109,6 +127,9 @@ while run:
         agua_grupo.draw(tela)
         sair_grupo.draw(tela)
 
+        for _obj in meu_mundo.obstaculo_list:
+            _obj[1].x += tela_rolar
+
         if jogador.vivo:
             if atirar:
                 jogador.atirar()
@@ -120,33 +141,13 @@ while run:
                 jogador.granadas -= 1  # contagem de granadas
                 granada_jogada = True
 
-            tela_rolar = jogador.movimento(movimento_esquerda, movimento_direita, mundo)
+            tela_rolar = jogador.movimento(movimento_esquerda, movimento_direita, meu_mundo)
             bg_rolar -= tela_rolar
 
-        else:
-            if jogador.frame_index == len(jogador.animacao_lista[jogador.acao]) - 1:
-                tela_rolar = 0
-                if restart_button.draw(tela):
-                    bg_rolar = 0
+        elif jogador.frame_index == len(jogador.animacao_lista[jogador.acao]) - 1:
+            restarted = True
 
-                terra_data = []  # Inicialize a lista vazia
-
-            with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
-                reader = csv.reader(csvfile, delimiter=',')
-                for linha in reader:
-                    linha_int = [int(terra) for terra in linha]
-                    terra_data.append(linha_int)
-
-
-
-
-            
-            meu_mundo = Mundo()
-            reiniciar_nivel()
-            jogador, barra_vida = meu_mundo.processo_data(terra_data)
-
-
-        mundo.draw()
+        meu_mundo.draw()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

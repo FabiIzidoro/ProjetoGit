@@ -16,6 +16,7 @@ class Mundo():
         self.obstaculo_list = []
 
     def processo_data(self, data):
+        self.obstaculo_list.clear()
         self.nivel_lenght = len(data[0])
         jogador, barra_vida = None, None
 

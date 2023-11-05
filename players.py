@@ -213,8 +213,5 @@ class Soldado(pygame.sprite.Sprite):
             self.vivo = False
             self.atualizar_acao(3)  # Defina a ação como "morto" quando a saúde do jogador chegar a zero
 
-
-
-
     def desenho(self):
         tela.blit(pygame.transform.flip(self.image, self.virar, False), self.rect)

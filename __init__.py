@@ -87,13 +87,6 @@ def reiniciar_nivel():
     agua_grupo.empty()
     sair_grupo.empty()
 
-    data = []
-    for _ in range(LINHAS):
-        # cria uma lista com "COLUNAS" elementos, todos inicializados com -1
-        l = [-1] * COLUNAS
-        terra_data.append(l)
-    return data
-
 
 with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
