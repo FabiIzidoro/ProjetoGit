@@ -9,8 +9,12 @@ from constants import TELA_ALTURA, TELA_LARGURA, TERRA_TAMANHO, GRAVIDADE, LIXO
 from guns import Bala
 
 
+
+
+
 class Soldado(pygame.sprite.Sprite):
     def __init__(self, jogador_tipo, x, y, scale, velocidade, monicao, granadas):
+        super().__init__()
 
         pygame.sprite.Sprite.__init__(self)
         self.vivo = True
@@ -85,6 +89,8 @@ class Soldado(pygame.sprite.Sprite):
             self.virar = False  # Certifique-se de definir virar como False para se mover para a direita
             self.direcao = 1
 
+            
+
 
         if self.pular == True and self.no_ar == False:
             self.vel_y = -11
@@ -99,6 +105,7 @@ class Soldado(pygame.sprite.Sprite):
 
         for terra in mundo.obstaculo_list:
             if terra[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                dx = 0
                 
                 if self.jogador_tipo == 'jogador':
                     # print("COLIDE X -=> ", terra[1], self.rect)
@@ -106,25 +113,20 @@ class Soldado(pygame.sprite.Sprite):
                         dx = 0
                 dx = 0
 
-            if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                print("COLIDE Y -=> ", terra[1], self.rect)
-                if self.vel_y >= 0:  # reduzindo velocidade a obstaculos
-                    self.no_ar = False
-                self.vel_y = 0
-                # self.no_ar = False
-                dy = terra[1].top - self.rect.bottom
-
-            # elif self.vel_y >= 0:
-                # print("self.vel_y >= 0")
-                # self.vel_y -= GRAVIDADE
-                # if self.vel_y < 0:
-                #     self.vel_y = 0
-                #     self.no_ar = False
-                #     dy = terra[1].top - self.rect.bottom
-
+            for terra in mundo.obstaculo_list:
+                if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                    print("COLIDE Y -=> ", terra[1], self.rect)
+                    if self.vel_y > 0:
+                        self.no_ar = False
+                        dy = terra[1].top - self.rect.bottom
+                        self.vel_y = 0
+                    elif self.vel_y < 0:
+                        dy = terra[1].bottom - self.rect.top
+                        self.vel_y = 0
         # se caso cair, ele morre
-        if pygame.sprite.spritecollide(self, agua_grupo, False):
+        if pygame.sprite.spritecollide(self, agua_grupo, False) or self.rect.bottom > TELA_ALTURA:
             self.saude_vida = 0
+            
 
         if self.rect.bottom > TELA_ALTURA:
             self.saude_vida = 0
