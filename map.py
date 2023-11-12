@@ -1,8 +1,5 @@
 
-from __init__ import (
-    img_list, tela, inimigo_grupo,
-    item_caixa_grupo, decoracao_grupo, agua_grupo, sair_grupo,
-)
+from __init__ import varibles
 
 from constants import TERRA_TAMANHO
 
@@ -23,7 +20,7 @@ class Mundo():
         for y, linha in enumerate(data):
             for x, terra in enumerate(linha):
                 if terra >= 0:
-                    img = img_list[terra]
+                    img = varibles["img_list"][terra]
                     img_rect = img.get_rect()
                     img_rect.x = x * TERRA_TAMANHO
                     img_rect.y = y * TERRA_TAMANHO
@@ -34,12 +31,12 @@ class Mundo():
 
                     elif terra >= 9 and terra <= 10:
                         agua = Agua(img, x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        agua_grupo.add(agua)
+                        varibles["agua_grupo"].add(agua)
 
                     elif terra >= 11 and terra <= 14:
                         decoracao = Decoracao(
                             img, x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        decoracao_grupo.add(decoracao)
+                        varibles["decoracao_grupo"].add(decoracao)
 
                     elif terra == 15:
                         jogador = Soldado(
@@ -49,29 +46,29 @@ class Mundo():
                     elif terra == 16:
                         inimigo = Soldado(
                             'inimigo', x * TERRA_TAMANHO, y * TERRA_TAMANHO, 1.65, 2, 20, 0)
-                        inimigo_grupo.add(inimigo)
+                        varibles["inimigo_grupo"].add(inimigo)
 
                     elif terra == 17:
                         item_caixa = ItemCaixa(
                             'Municao', x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        item_caixa_grupo.add(item_caixa)
+                        varibles["item_caixa_grupo"].add(item_caixa)
 
                     elif terra == 18:
                         item_caixa = ItemCaixa(
                             'Granada', x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        item_caixa_grupo.add(item_caixa)
+                        varibles["item_caixa_grupo"].add(item_caixa)
 
                     elif terra == 19:
                         item_caixa = ItemCaixa(
                             'Vida', x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        item_caixa_grupo.add(item_caixa)
+                        varibles["item_caixa_grupo"].add(item_caixa)
 
                     elif terra == 20:
                         sair = Sair(img, x * TERRA_TAMANHO, y * TERRA_TAMANHO)
-                        sair_grupo.add(sair)
+                        varibles["sair_grupo"].add(sair)
 
         return jogador, barra_vida
 
     def draw(self):
         for terra in self.obstaculo_list:
-            tela.blit(terra[0], terra[1])
+            varibles["tela"].blit(terra[0], terra[1])

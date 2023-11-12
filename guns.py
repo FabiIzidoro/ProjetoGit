@@ -1,8 +1,5 @@
 import pygame
-from __init__ import (
-    bala_img, granada_img,
-    bala_grupo, inimigo_grupo, explode_grupo,
-)
+from __init__ import varibles
 from constants import TELA_LARGURA, GRAVIDADE, TERRA_TAMANHO
 
 # Definindo a classe Bala
@@ -10,7 +7,7 @@ class Bala(pygame.sprite.Sprite):
     def __init__(self, x, y, direcao):
         super().__init__()  # Inicialização da classe base Sprite
         self.velocidade = 10
-        self.image = bala_img
+        self.image = varibles["bala_img"]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)  # Definindo a posição inicial da bala
         self.direcao = direcao
@@ -29,13 +26,13 @@ class Bala(pygame.sprite.Sprite):
                 self.kill()
 
         # Checando colisões com o jogador
-        if pygame.sprite.spritecollide(jogador, bala_grupo, False) and jogador.vivo:
+        if pygame.sprite.spritecollide(jogador, varibles["bala_grupo"], False) and jogador.vivo:
             jogador.saude_vida -= 5
             self.kill()
 
         # Checando colisões com inimigos
-        if pygame.sprite.groupcollide(inimigo_grupo, bala_grupo, False, True):
-            for inimigo in inimigo_grupo:
+        if pygame.sprite.groupcollide(varibles["inimigo_grupo"], varibles["bala_grupo"], False, True):
+            for inimigo in varibles["inimigo_grupo"]:
                 if inimigo.vivo:
                     inimigo.saude_vida -= 25
                     self.kill()
@@ -47,7 +44,7 @@ class Granada(pygame.sprite.Sprite):
         self.tempo = 100
         self.vel_y = -10
         self.velocidade = 7
-        self.image = granada_img
+        self.image = varibles["granada_img"]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.width = self.image.get_width()
@@ -103,14 +100,14 @@ class Granada(pygame.sprite.Sprite):
         if self.tempo <= 0:
             self.kill()
             explode = Explode(self.rect.x, self.rect.y, 0.5)
-            explode_grupo.add(explode)
+            varibles["explode_grupo"].add(explode)
 
             # Verificando danos ao jogador e inimigos na explosão
             if abs(self.rect.centerx - jogador.rect.centerx) < TERRA_TAMANHO * 2 and \
                     abs(self.rect.centery - jogador.rect.centery) < TERRA_TAMANHO * 2:
                 jogador.saude_vida -= 50
 
-            for inimigo in inimigo_grupo:
+            for inimigo in varibles["inimigo_grupo"]:
                 if abs(self.rect.centerx - inimigo.rect.centerx) < TERRA_TAMANHO * 2 and \
                         abs(self.rect.centery - inimigo.rect.centery) < TERRA_TAMANHO * 2:
                     inimigo.saude_vida -= 50

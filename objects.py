@@ -1,6 +1,6 @@
 import pygame
 
-from __init__ import item_caixas, tela, tela_rolar
+from __init__ import varibles, item_caixas
 
 from constants import BLACK, RED, YELLOW, TERRA_TAMANHO
 
@@ -12,6 +12,10 @@ class Decoracao(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midtop = (x + TERRA_TAMANHO // 2, y +
                             (TERRA_TAMANHO - self.image.get_height()))
+        
+    def update(self):  # pegar objetos
+        print("tela_rolar -=> ", varibles["tela_rolar"])
+        self.rect.x += varibles["tela_rolar"]
 
 
 class Agua(pygame.sprite.Sprite):
@@ -42,7 +46,8 @@ class ItemCaixa(pygame.sprite.Sprite):
                             (TERRA_TAMANHO - self.image.get_height()))
 
     def update(self, jogador):  # pegar objetos
-        self.rect.x += tela_rolar
+        print("tela_rolar -=> ", varibles["tela_rolar"])
+        self.rect.x += varibles["tela_rolar"]
         if pygame.sprite.collide_rect(self, jogador):
             if self.item_type == 'Vida':
                 jogador.saude_vida += 25
@@ -70,6 +75,6 @@ class BarraVida():
         self.saude_vida = saude_vida
         por_vida = self.saude_vida / self.maximo_saude
 
-        pygame.draw.rect(tela, BLACK, (self.x - 2, self.y - 2, 164, 24))
-        pygame.draw.rect(tela, RED, (self.x, self.y, 160, 20))
-        pygame.draw.rect(tela, YELLOW, (self.x, self.y, 160 * por_vida, 20))
+        pygame.draw.rect(varibles["tela"], BLACK, (self.x - 2, self.y - 2, 164, 24))
+        pygame.draw.rect(varibles["tela"], RED, (self.x, self.y, 160, 20))
+        pygame.draw.rect(varibles["tela"], YELLOW, (self.x, self.y, 160 * por_vida, 20))

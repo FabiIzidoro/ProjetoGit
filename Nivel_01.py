@@ -5,17 +5,8 @@ import button
 from constants import TELA_ALTURA, BG, RED, TELA_LARGURA, FPS
 
 from __init__ import (
-    tela, nuven_img,
-    montanha_img, painel1_img, painel2_img,
-    font, start_img, restart_img, terra_data,
-    exit_img, bala_img, granada_img, nivel, relogio,
     desenhar_text, reiniciar_nivel,
-    inimigo_grupo, bala_grupo, granada_grupo, explode_grupo,
-    item_caixa_grupo, decoracao_grupo, agua_grupo, sair_grupo,
-
-    tela_rolar, bg_rolar, nivel,   
-    movimento_esquerda, movimento_direita,
-    atirar, granada, granada_jogada
+    varibles
 )
 
 from map import Mundo
@@ -23,36 +14,36 @@ from guns import Granada
 
 
 meu_mundo = Mundo()
-jogador, barra_vida = meu_mundo.processo_data(terra_data)
+jogador, barra_vida = meu_mundo.processo_data(varibles["terra_data"])
 
 
 # criando botoes
 start_button = button.Button(
-    TELA_LARGURA // 2 - 130, TELA_ALTURA // 2 - 150, start_img, 1)
+    TELA_LARGURA // 2 - 130, TELA_ALTURA // 2 - 150, varibles["start_img"], 1)
 
 exit_button = button.Button(TELA_LARGURA // 2 - 110,
-                            TELA_ALTURA // 2 * 50, exit_img, 1)
+                            TELA_ALTURA // 2 * 50, varibles["exit_img"], 1)
 
 restart_button = button.Button(
-    TELA_LARGURA // 2 - 100, TELA_ALTURA // 2 - 50, restart_img, 1)
+    TELA_LARGURA // 2 - 100, TELA_ALTURA // 2 - 50, varibles["restart_img"], 1)
 
 
 def desenho_bg():
 
-    tela.fill(BG)
-    width = nuven_img.get_width()
+    varibles["tela"].fill(BG)
+    width = varibles["nuven_img"].get_width()
     for x in range(5):
         # posicionando no topo
-        tela.blit(nuven_img, ((x * width)-bg_rolar * 0.5, 0))
+        varibles["tela"].blit(varibles["nuven_img"], ((x * width)-varibles["bg_rolar"] * 0.5, 0))
 
-        tela.blit(montanha_img, ((x * width)-bg_rolar * 0.6, TELA_ALTURA -
-                  montanha_img.get_height() - 300))  # cortando da forma certa
+        varibles["tela"].blit(varibles["montanha_img"], ((x * width)-varibles["bg_rolar"] * 0.6, TELA_ALTURA -
+                  varibles["montanha_img"].get_height() - 300))  # cortando da forma certa
 
-        tela.blit(painel1_img, ((x * width)-bg_rolar * 0.7,
-                  TELA_ALTURA - painel1_img.get_height() - 150))
+        varibles["tela"].blit(varibles["painel1_img"], ((x * width)-varibles["bg_rolar"] * 0.7,
+                  TELA_ALTURA - varibles["painel1_img"].get_height() - 150))
 
-        tela.blit(painel2_img, ((x * width)-bg_rolar * 0.8,
-                  TELA_ALTURA - painel2_img.get_height()))
+        varibles["tela"].blit(varibles["painel2_img"], ((x * width)-varibles["bg_rolar"] * 0.8,
+                  TELA_ALTURA - varibles["painel2_img"].get_height()))
 
 
 game_started = False
@@ -60,32 +51,32 @@ restarted = False
 run = True
 
 while run:
-    relogio.tick(FPS)
+    varibles["relogio"].tick(FPS)
 
     if restarted:
-        if restart_button.draw(tela):
+        if restart_button.draw(varibles["tela"]):
             restarted = False
-            bg_rolar = 0
+            varibles["bg_rolar"] = 0
             
             meu_mundo.obstaculo_list.clear()
             reiniciar_nivel()
-            terra_data.clear()
+            varibles["terra_data"].clear()
         
-            with open(f'nivel{nivel}_data.csv', newline='') as csvfile:
+            with open(f'nivel{varibles["nivel"]}_data.csv', newline='') as csvfile:
                 reader = csv.reader(csvfile, delimiter=',')
                 for linha in reader:
                     linha_int = [int(terra) for terra in linha]
-                    terra_data.append(linha_int)
+                    varibles["terra_data"].append(linha_int)
             
-            jogador, barra_vida = meu_mundo.processo_data(terra_data)
+            jogador, barra_vida = meu_mundo.processo_data(varibles["terra_data"])
             
     elif game_started == False:
 
-        tela.fill(BG)  # se inicia tudo
-        if start_button.draw(tela):
+        varibles["tela"].fill(BG)  # se inicia tudo
+        if start_button.draw(varibles["tela"]):
             game_started = True
             
-        if exit_button.draw(tela):
+        if exit_button.draw(varibles["tela"]):
             run = False
 
     else:
@@ -93,56 +84,57 @@ while run:
         barra_vida.desenhar_barra(jogador.saude_vida)
 
         # Desenha as informações do player, como munições e granadas
-        desenhar_text('Munição:', font, RED, 10, 35)
+        desenhar_text('Munição:', varibles["font"], RED, 10, 35)
         for x in range(jogador.monicao):
-            tela.blit(bala_img, (90 + (x*10), 40))
+            varibles["tela"].blit(varibles["bala_img"], (90 + (x*10), 40))
 
-        desenhar_text('Granadas:', font, RED, 10, 60)
+        desenhar_text('Granadas:', varibles["font"], RED, 10, 60)
         for x in range(jogador.granadas):
-            tela.blit(granada_img, (135 + (x*15), 60))
+            varibles["tela"].blit(varibles["granada_img"], (135 + (x*15), 60))
 
         jogador.atualizar()
         jogador.desenho()
 
-        for inimigo in inimigo_grupo:
+        for inimigo in varibles["inimigo_grupo"]:
             inimigo.ai_inimigo(jogador, meu_mundo)
             inimigo.atualizar()
             inimigo.desenho()
 
-        bala_grupo.update(jogador, meu_mundo)
-        granada_grupo.update(jogador, meu_mundo)
-        explode_grupo.update()
-        item_caixa_grupo.update(jogador)
+        varibles["bala_grupo"].update(jogador, meu_mundo)
+        varibles["granada_grupo"].update(jogador, meu_mundo)
+        varibles["explode_grupo"].update()
+        varibles["item_caixa_grupo"].update(jogador)
 
-        decoracao_grupo.update()
-        agua_grupo.update()
-        sair_grupo.update()
+        varibles["decoracao_grupo"].update()
+        varibles["agua_grupo"].update()
+        varibles["sair_grupo"].update()
 
-        bala_grupo.draw(tela)
-        granada_grupo.draw(tela)
-        explode_grupo.draw(tela)
-        item_caixa_grupo.draw(tela)
+        varibles["bala_grupo"].draw(varibles["tela"])
+        varibles["granada_grupo"].draw(varibles["tela"])
+        varibles["explode_grupo"].draw(varibles["tela"])
+        varibles["item_caixa_grupo"].draw(varibles["tela"])
 
-        decoracao_grupo.draw(tela)
-        agua_grupo.draw(tela)
-        sair_grupo.draw(tela)
+        varibles["decoracao_grupo"].draw(varibles["tela"])
+        varibles["agua_grupo"].draw(varibles["tela"])
+        varibles["sair_grupo"].draw(varibles["tela"])
 
+        print("TELA_ROLAR -=> ", varibles["tela_rolar"])
         for _obj in meu_mundo.obstaculo_list:
-            _obj[1].x += tela_rolar
+            _obj[1].x += varibles["tela_rolar"]
 
         if jogador.vivo:
-            if atirar:
+            if varibles["atirar"]:
                 jogador.atirar()
 
-            elif granada and granada_jogada == False and jogador.granadas > 0:
-                granada = Granada(jogador.rect.centerx + (
+            elif varibles["granada"] and varibles["granada_jogada"] == False and jogador.granadas > 0:
+                varibles["granada"] = Granada(jogador.rect.centerx + (
                     0.5 * jogador.rect.size[0] * jogador.direcao), jogador.rect.top, jogador.direcao)
-                granada_grupo.add(granada)
+                varibles["granada_grupo"].add(varibles["granada"])
                 jogador.granadas -= 1  # contagem de granadas
-                granada_jogada = True
+                varibles["granada_jogada"] = True
 
-            tela_rolar = jogador.movimento(movimento_esquerda, movimento_direita, meu_mundo)
-            bg_rolar -= tela_rolar
+            varibles["tela_rolar"] = jogador.movimento(varibles["movimento_esquerda"], varibles["movimento_direita"], meu_mundo)
+            varibles["bg_rolar"] -= varibles["tela_rolar"]
 
         elif jogador.frame_index == len(jogador.animacao_lista[jogador.acao]) - 1:
             restarted = True
@@ -155,13 +147,13 @@ while run:
                         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                movimento_esquerda = True
+                varibles["movimento_esquerda"] = True
             if event.key == pygame.K_d:
-                movimento_direita = True
+                varibles["movimento_direita"] = True
             if event.key == pygame.K_SPACE:
-                atirar = True
+                varibles["atirar"] = True
             if event.key == pygame.K_q:
-                granada = True
+                varibles["granada"] = True
             if event.key == pygame.K_w and jogador.vivo:
                 jogador.pular = True
             if event.key == pygame.K_ESCAPE:
@@ -169,14 +161,14 @@ while run:
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
-                movimento_esquerda = False
+                varibles["movimento_esquerda"] = False
             if event.key == pygame.K_d:
-                movimento_direita = False
+                varibles["movimento_direita"] = False
             if event.key == pygame.K_SPACE:
-                atirar = False
+                varibles["atirar"] = False
             if event.key == pygame.K_q:
-                granada = False
-                granada_jogada = False
+                varibles["granada"] = False
+                varibles["granada_jogada"] = False
 
     pygame.display.update()
 

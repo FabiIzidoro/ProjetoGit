@@ -2,7 +2,7 @@ import pygame
 import os
 import random
 
-from __init__ import bala_grupo, agua_grupo, bg_rolar, tela
+from __init__ import varibles
 
 from constants import TELA_ALTURA, TELA_LARGURA, TERRA_TAMANHO, GRAVIDADE, LIXO
 
@@ -107,7 +107,7 @@ class Soldado(pygame.sprite.Sprite):
                 dx = 0
 
             if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                print("COLIDE Y -=> ", terra[1], self.rect)
+                # print("COLIDE Y -=> ", terra[1], self.rect)
                 if self.vel_y >= 0:  # reduzindo velocidade a obstaculos
                     self.no_ar = False
                 self.vel_y = 0
@@ -123,7 +123,7 @@ class Soldado(pygame.sprite.Sprite):
                 #     dy = terra[1].top - self.rect.bottom
 
         # se caso cair, ele morre
-        if pygame.sprite.spritecollide(self, agua_grupo, False):
+        if pygame.sprite.spritecollide(self, varibles["agua_grupo"], False):
             self.saude_vida = 0
 
         if self.rect.bottom > TELA_ALTURA:
@@ -137,7 +137,7 @@ class Soldado(pygame.sprite.Sprite):
         self.rect.y += dy
 
         if self.jogador_tipo == 'jogador':
-            if (self.rect.right > TELA_LARGURA - LIXO and bg_rolar < (mundo.nivel_lenght * TERRA_TAMANHO) - TELA_LARGURA) or (self.rect.left < LIXO and bg_rolar > abs(dx)):
+            if (self.rect.right > TELA_LARGURA - LIXO and varibles["bg_rolar"] < (mundo.nivel_lenght * TERRA_TAMANHO) - TELA_LARGURA) or (self.rect.left < LIXO and varibles["bg_rolar"] > abs(dx)):
                 self.rect.x -= dx
                 tela_rolar = -dx
 
@@ -148,7 +148,7 @@ class Soldado(pygame.sprite.Sprite):
             self.atirar_bala_count = 20
             bala = Bala(self.rect.centerx + (0.6 *
                         self.rect.size[0] * self.direcao), self.rect.centery, self.direcao)
-            bala_grupo.add(bala)
+            varibles["bala_grupo"].add(bala)
             self.monicao -= 1
 
     def ai_inimigo(self, jogador, mundo):
@@ -214,4 +214,4 @@ class Soldado(pygame.sprite.Sprite):
             self.atualizar_acao(3)  # Defina a ação como "morto" quando a saúde do jogador chegar a zero
 
     def desenho(self):
-        tela.blit(pygame.transform.flip(self.image, self.virar, False), self.rect)
+        varibles["tela"].blit(pygame.transform.flip(self.image, self.virar, False), self.rect)
