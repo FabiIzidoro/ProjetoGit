@@ -60,6 +60,9 @@ class Soldado(pygame.sprite.Sprite):
         self.checar_a_vida()
         if self.atirar_bala_count > 0:
             self.atirar_bala_count -= 1
+        
+        if self.jogador_tipo != 'jogador':
+            self.rect.x += varibles["tela_rolar"]
 
     def movimento(self, movimento_esquerda, movimento_direita, mundo):
         if self.no_ar:
@@ -79,62 +82,59 @@ class Soldado(pygame.sprite.Sprite):
             dx = -self.velocidade
             self.virar = True
             self.direcao = -1
-
         if movimento_direita:
             dx = self.velocidade
-            self.virar = False  # Certifique-se de definir virar como False para se mover para a direita
+            self.virar = False
             self.direcao = 1
 
 
         if self.pular == True and self.no_ar == False:
-            self.vel_y = -11
+            self.vel_y = -14
             self.pular = False
             self.no_ar = True
 
+        # Adiciona a gravidade
         self.vel_y += GRAVIDADE
         if self.vel_y > 10:
-            self.vel_y = 0
+            self.vel_y = 10  # Limita a velocidade da gravidade
 
         dy += self.vel_y
 
+        # Verifica colisões com blocos (Eixo X)
+        self.rect.x += dx
         for terra in mundo.obstaculo_list:
-            if terra[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
-                
-                if self.jogador_tipo == 'jogador':
-                    # print("COLIDE X -=> ", terra[1], self.rect)
-                    if self.rect.left + dx < 0 or self.rect.right + dx > TELA_LARGURA:
-                        dx = 0
+            if terra[1].colliderect(self.rect):
+                if dx > 0:
+                    self.rect.right = terra[1].left
+                if dx < 0:
+                    self.rect.left = terra[1].right
                 dx = 0
 
-            if terra[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                # print("COLIDE Y -=> ", terra[1], self.rect)
-                if self.vel_y >= 0:  # reduzindo velocidade a obstaculos
+        # Verifica colisões com blocos (Eixo Y)
+        self.rect.y += dy
+        for terra in mundo.obstaculo_list:
+            if terra[1].colliderect(self.rect):
+                if self.vel_y >= 0:  # Colisão ao cair
+                    self.rect.bottom = terra[1].top
+                    self.vel_y = 0
                     self.no_ar = False
-                self.vel_y = 0
-                # self.no_ar = False
-                dy = terra[1].top - self.rect.bottom
+                else:  # Colisão ao pular
+                    self.rect.top = terra[1].bottom
+                    self.vel_y = 0
+                dy = 0
 
-            # elif self.vel_y >= 0:
-                # print("self.vel_y >= 0")
-                # self.vel_y -= GRAVIDADE
-                # if self.vel_y < 0:
-                #     self.vel_y = 0
-                #     self.no_ar = False
-                #     dy = terra[1].top - self.rect.bottom
-
-        # se caso cair, ele morre
+        # Verifica se o jogador caiu na água ou fora da tela
         if pygame.sprite.spritecollide(self, varibles["agua_grupo"], False):
             self.saude_vida = 0
-
         if self.rect.bottom > TELA_ALTURA:
             self.saude_vida = 0
 
+        # Verifica limites da tela
         if self.jogador_tipo == 'jogador':
-            if self.rect.left + dx < 0 or self.rect.right + dx > TELA_LARGURA:
-                dx = 0
-
-        self.rect.x += dx
-        self.rect.y += dy
+            if self.rect.left < 0:
+                self.rect.left = 0
+            if self.rect.right > TELA_LARGURA:
+                self.rect.right = TELA_LARGURA
 
         if self.jogador_tipo == 'jogador':
             if (self.rect.right > TELA_LARGURA - LIXO and varibles["bg_rolar"] < (mundo.nivel_lenght * TERRA_TAMANHO) - TELA_LARGURA) or (self.rect.left < LIXO and varibles["bg_rolar"] > abs(dx)):

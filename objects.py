@@ -14,7 +14,6 @@ class Decoracao(pygame.sprite.Sprite):
                             (TERRA_TAMANHO - self.image.get_height()))
         
     def update(self):  # pegar objetos
-        print("tela_rolar -=> ", varibles["tela_rolar"])
         self.rect.x += varibles["tela_rolar"]
 
 
@@ -26,6 +25,9 @@ class Agua(pygame.sprite.Sprite):
         self.rect.midtop = (x + TERRA_TAMANHO // 2, y +
                             (TERRA_TAMANHO - self.image.get_height()))
 
+    def update(self):
+        self.rect.x += varibles["tela_rolar"]
+
 
 class Sair(pygame.sprite.Sprite):
     def __init__(self, img, x, y):
@@ -34,6 +36,9 @@ class Sair(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midtop = (x + TERRA_TAMANHO // 2, y +
                             (TERRA_TAMANHO - self.image.get_height()))
+
+    def update(self):
+        self.rect.x += varibles["tela_rolar"]
 
 
 class ItemCaixa(pygame.sprite.Sprite):
@@ -46,7 +51,6 @@ class ItemCaixa(pygame.sprite.Sprite):
                             (TERRA_TAMANHO - self.image.get_height()))
 
     def update(self, jogador):  # pegar objetos
-        print("tela_rolar -=> ", varibles["tela_rolar"])
         self.rect.x += varibles["tela_rolar"]
         if pygame.sprite.collide_rect(self, jogador):
             if self.item_type == 'Vida':

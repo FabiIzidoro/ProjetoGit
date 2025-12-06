@@ -14,7 +14,7 @@ class Bala(pygame.sprite.Sprite):
 
     def update(self, jogador, mundo):
         # Movendo a bala
-        self.rect.x += (self.direcao * self.velocidade)
+        self.rect.x += (self.direcao * self.velocidade) + varibles["tela_rolar"]
         
         # Removendo a bala se sair da tela
         if self.rect.right < 0 or self.rect.left > TELA_LARGURA:
@@ -30,12 +30,11 @@ class Bala(pygame.sprite.Sprite):
             jogador.saude_vida -= 5
             self.kill()
 
-        # Checando colisões com inimigos
-        if pygame.sprite.groupcollide(varibles["inimigo_grupo"], varibles["bala_grupo"], False, True):
-            for inimigo in varibles["inimigo_grupo"]:
-                if inimigo.vivo:
-                    inimigo.saude_vida -= 25
-                    self.kill()
+        # Checando colisões com inimigos individualmente
+        for inimigo in varibles["inimigo_grupo"]:
+            if self.rect.colliderect(inimigo.rect) and inimigo.vivo:
+                inimigo.saude_vida -= 25
+                self.kill()
 
 # Definindo a classe Granada
 class Granada(pygame.sprite.Sprite):
@@ -111,6 +110,9 @@ class Granada(pygame.sprite.Sprite):
                 if abs(self.rect.centerx - inimigo.rect.centerx) < TERRA_TAMANHO * 2 and \
                         abs(self.rect.centery - inimigo.rect.centery) < TERRA_TAMANHO * 2:
                     inimigo.saude_vida -= 50
+        
+        # Atualizar posição com rolagem da tela
+        self.rect.x += varibles["tela_rolar"]
 
 # Definindo a classe de Explosão
 class Explode(pygame.sprite.Sprite):

@@ -48,12 +48,32 @@ def desenho_bg():
 
 game_started = False
 restarted = False
+level_transition = False
 run = True
 
 while run:
     varibles["relogio"].tick(FPS)
 
-    if restarted:
+    if level_transition:
+        level_transition = False
+        varibles["nivel"] += 1
+        if varibles["nivel"] > 2:
+            varibles["nivel"] = 1
+        
+        varibles["bg_rolar"] = 0
+        meu_mundo.obstaculo_list.clear()
+        reiniciar_nivel()
+        varibles["terra_data"].clear()
+        
+        with open(f'nivel{varibles["nivel"]}_data.csv', newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            for linha in reader:
+                linha_int = [int(terra) for terra in linha]
+                varibles["terra_data"].append(linha_int)
+        
+        jogador, barra_vida = meu_mundo.processo_data(varibles["terra_data"])
+
+    elif restarted:
         if restart_button.draw(varibles["tela"]):
             restarted = False
             varibles["bg_rolar"] = 0
@@ -118,7 +138,6 @@ while run:
         varibles["agua_grupo"].draw(varibles["tela"])
         varibles["sair_grupo"].draw(varibles["tela"])
 
-        print("TELA_ROLAR -=> ", varibles["tela_rolar"])
         for _obj in meu_mundo.obstaculo_list:
             _obj[1].x += varibles["tela_rolar"]
 
@@ -135,6 +154,9 @@ while run:
 
             varibles["tela_rolar"] = jogador.movimento(varibles["movimento_esquerda"], varibles["movimento_direita"], meu_mundo)
             varibles["bg_rolar"] -= varibles["tela_rolar"]
+
+            if pygame.sprite.spritecollide(jogador, varibles["sair_grupo"], False):
+                level_transition = True
 
         elif jogador.frame_index == len(jogador.animacao_lista[jogador.acao]) - 1:
             restarted = True
